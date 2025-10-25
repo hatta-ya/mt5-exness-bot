@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Use AppleScript to open Terminal and run the command
+osascript -e 'tell application "Terminal" to do script "cd /Users/fdev/Documents/Docs/mt5-exness-forex-bot; ./\\🚀\\ Start\\ Trading\\ Bot.command"'

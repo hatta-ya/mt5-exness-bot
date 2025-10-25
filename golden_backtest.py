@@ -58,29 +58,35 @@ class GoldenTrendBacktest:
             return None
 
     def execute_trade(self, action, entry_price, sl_price, tp_price, lot_size, entry_time):
-        """บันทึกการเทรด"""
+        """บันทึกการเทรด พร้อมจำลอง Slippage และ Commission"""
         multiplier = 1 if action == "BUY" else -1
-        
+
+        # ค่า Spread, Commission และ Slippage
+        spread = 0.0  # Zero spread account
+        commission_per_lot = 7.0  # $7 per lot per side
+        commission = commission_per_lot * lot_size * 2  # ค่าคอมมิชชั่นทั้งเปิดและปิด
+        slippage = np.random.uniform(-0.5, 0.5)  # Slippage ±0.5
+
         # คำนวณ P&L เมื่อปิดที่ TP
         if action == "BUY":
-            exit_price = tp_price
+            exit_price = tp_price - spread + slippage  # หัก Spread และเพิ่ม Slippage สำหรับ BUY
         else:
-            exit_price = tp_price
-            
+            exit_price = tp_price + spread + slippage  # บวก Spread และเพิ่ม Slippage สำหรับ SELL
+
         # คำนวณ P&L สำหรับ XAUUSD
-        pnl = (exit_price - entry_price) * multiplier * lot_size * 100
-        
+        pnl = ((exit_price - entry_price) * multiplier * lot_size * 100) - commission
+
         # อัปเดต balance
         old_balance = self.balance
         self.balance += pnl
-        
+
         # จัดการ consecutive losses
         if pnl > 0:
             self.consecutive_losses = 0
         else:
             self.consecutive_losses += 1
             self.max_consecutive_losses = max(self.max_consecutive_losses, self.consecutive_losses)
-        
+
         # บันทึก trade
         trade = {
             'time': entry_time,
@@ -92,11 +98,13 @@ class GoldenTrendBacktest:
             'lot_size': lot_size,
             'pnl': pnl,
             'balance': self.balance,
-            'result': 'WIN' if pnl > 0 else 'LOSS'
+            'result': 'WIN' if pnl > 0 else 'LOSS',
+            'commission': commission,
+            'slippage': slippage
         }
-        
+
         self.trades.append(trade)
-        
+
         return trade
 
     def run_backtest(self):

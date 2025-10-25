@@ -25,8 +25,15 @@ DAILY_PROFIT_TARGET = float(os.getenv("DAILY_PROFIT_TARGET", "2.0"))
 DAILY_DRAWDOWN_LIMIT = float(os.getenv("DAILY_DRAWDOWN_LIMIT", "2.0"))
 MAX_OPEN_TRADES = int(os.getenv("MAX_OPEN_TRADES", "1"))
 
-EMA_SHORT = int(os.getenv("EMA_SHORT", "50"))
-EMA_LONG = int(os.getenv("EMA_LONG", "200"))
+# Golden Trend System Parameters
+EMA_SHORT = int(os.getenv("EMA_SHORT", "20"))
+EMA_LONG = int(os.getenv("EMA_LONG", "50"))
+EMA_VERY_LONG = int(os.getenv("EMA_VERY_LONG", "200"))
+
+# Risk Management
+RISK_PERCENT = float(os.getenv("RISK_PERCENT", "1.5"))
+MAX_POSITIONS = int(os.getenv("MAX_POSITIONS", "3"))
+MAX_CONSECUTIVE_LOSSES = int(os.getenv("MAX_CONSECUTIVE_LOSSES", "3"))
 
 BACKTEST_DAYS = int(os.getenv("BACKTEST_DAYS", "180"))
 

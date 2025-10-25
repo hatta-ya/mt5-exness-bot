@@ -46,10 +46,10 @@ def show_menu():
     """แสดงเมนูหลัก"""
     print("\n🎯 เลือกโหมดการใช้งาน:")
     print("=" * 40)
-    print("1. 🚀 Live Demo Trading (แนะนำ)")
-    print("2. 🎮 Quick Demo Test")
-    print("3. 📈 Backtest Performance")  
-    print("4. 🔍 Analyze Strategy")
+    print("1. 🏆 Golden Trend Live Demo")
+    print("2. 🔍 Test Golden Trend System")  
+    print("3. 🟢 REAL TRADING (เงินจริง)")
+    print("4. 📈 Golden Trend Backtest")
     print("5. ⚙️ Settings (.env)")
     print("6. 📊 View Current Config")
     print("0. ❌ Exit")
@@ -61,8 +61,9 @@ def run_script(script_name, description):
     print("=" * 50)
     
     try:
-        # รันสคริปต์ใน virtual environment
-        venv_python = "/Users/fdev/Documents/Docs/mt5-exness-forex-bot/.venv/bin/python"
+        # รันสคริปต์ใน virtual environment - ใช้ path ปัจจุบัน
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        venv_python = os.path.join(current_dir, ".venv", "bin", "python")
         
         if os.path.exists(venv_python):
             cmd = [venv_python, script_name]
@@ -141,13 +142,13 @@ def main():
             choice = input("\n🎯 เลือก (0-6): ").strip()
             
             if choice == "1":
-                run_script("live_demo.py", "Live Demo Trading")
+                run_script("golden_live_demo.py", "🏆 Golden Trend Live Demo")
             elif choice == "2":
-                run_script("demo_mode.py", "Quick Demo Test")
+                run_script("test_golden_trend.py", "🔍 Golden Trend System Test")
             elif choice == "3":
-                run_script("backtest_mac.py", "Backtest Performance")
+                run_script("real_trading.py", "🔴 REAL TRADING")
             elif choice == "4":
-                run_script("analyze_strategy.py", "Strategy Analysis")
+                run_script("golden_backtest.py", "🏆 Golden Trend Backtest")
             elif choice == "5":
                 edit_settings()
             elif choice == "6":

@@ -32,7 +32,7 @@ class TradingBotGUI:
         
         title_label = tk.Label(
             header_frame, 
-            text="🚀 MT5 Forex Trading Bot", 
+            text="🏆 Golden Trend Trading System", 
             font=("Arial", 20, "bold"),
             fg="#00ff88",
             bg="#1e1e1e"
@@ -41,7 +41,7 @@ class TradingBotGUI:
         
         subtitle_label = tk.Label(
             header_frame,
-            text="💰 XAUUSD (Gold) Trading System - macOS Demo",
+            text="💰 Advanced Multi-Indicator XAUUSD Trading - macOS Demo",
             font=("Arial", 12),
             fg="#ffaa00", 
             bg="#1e1e1e"
@@ -53,10 +53,10 @@ class TradingBotGUI:
         button_frame.pack(pady=20)
         
         # Main Buttons
-        self.create_button(button_frame, "🚀 Live Demo Trading", self.run_live_demo, "#00aa00")
-        self.create_button(button_frame, "🎮 Quick Demo Test", self.run_quick_demo, "#0088aa")
-        self.create_button(button_frame, "📈 Backtest Performance", self.run_backtest, "#aa8800")
-        self.create_button(button_frame, "🔍 Analyze Strategy", self.run_analysis, "#8800aa")
+        self.create_button(button_frame, "🏆 Golden Trend Live Demo", self.run_golden_live, "#00aa00")
+        self.create_button(button_frame, "🔍 Test Golden Trend", self.run_golden_test, "#0088aa")
+        self.create_button(button_frame, "📈 Golden Trend Backtest", self.run_golden_backtest, "#aa8800")
+        self.create_button(button_frame, "� Real Trading", self.run_real_trading, "#aa0000")
         
         # Settings Frame
         settings_frame = tk.Frame(self.root, bg="#1e1e1e")
@@ -160,21 +160,26 @@ class TradingBotGUI:
         thread.daemon = True
         thread.start()
         
-    def run_live_demo(self):
-        """รัน Live Demo"""
-        self.run_command("live_demo.py", "Live Demo Trading")
+    def run_golden_live(self):
+        """รัน Golden Trend Live Demo"""
+        self.run_command("golden_live_demo.py", "Golden Trend Live Demo")
         
-    def run_quick_demo(self):
-        """รัน Quick Demo"""
-        self.run_command("demo_mode.py", "Quick Demo Test")
+    def run_golden_test(self):
+        """รัน Golden Trend Test"""
+        self.run_command("test_golden_trend.py", "Golden Trend System Test")
         
-    def run_backtest(self):
-        """รัน Backtest"""
-        self.run_command("backtest_mac.py", "Backtest Performance")
+    def run_golden_backtest(self):
+        """รัน Golden Trend Backtest"""
+        self.run_command("golden_backtest.py", "Golden Trend Backtest")
         
-    def run_analysis(self):
-        """รัน Analysis"""
-        self.run_command("analyze_strategy.py", "Strategy Analysis")
+    def run_real_trading(self):
+        """รัน Real Trading"""
+        result = messagebox.askyesno(
+            "⚠️ Warning", 
+            "This will start REAL TRADING with real money!\nAre you sure you want to continue?"
+        )
+        if result:
+            self.run_command("real_trading.py", "Real Trading")
         
     def view_settings(self):
         """แสดงการตั้งค่า"""

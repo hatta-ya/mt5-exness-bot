@@ -16,12 +16,26 @@ def clear_screen():
 
 def print_banner():
     """แสดงแบนเนอร์"""
-    print("""
+    # โหลด SYMBOL จาก .env
+    from dotenv import load_dotenv
+    load_dotenv()
+    symbol = os.getenv("SYMBOL", "XAUUSD")
+    
+    # กำหนดชื่อ symbol ที่แสดง
+    symbol_display = {
+        "XAUUSD": "XAUUSD (Gold)",
+        "BTCUSD": "BTCUSD (Bitcoin)",
+        "EURUSD": "EURUSD (Euro)",
+        "GBPUSD": "GBPUSD (Pound)",
+        "USDJPY": "USDJPY (Yen)"
+    }.get(symbol, symbol)
+    
+    print(f"""
 ╔══════════════════════════════════════════════════════════════╗
 ║                  🚀 MT5 Forex Trading Bot                    ║
 ║                     macOS Demo Version                       ║
 ║                                                              ║
-║               💰 XAUUSD (Gold) Trading System                ║
+║               💰 {symbol_display:^30}                ║
 ╚══════════════════════════════════════════════════════════════╝
     """)
     print(f"📅 วันที่: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")

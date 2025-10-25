@@ -33,8 +33,21 @@ class GoldenTrendLiveDemo:
         self.winning_trades = 0
         self.daily_pnl = 0.0
         
+        # กำหนดชื่อ symbol ที่แสดง
+        symbol_display = {
+            "XAUUSD": "💰 XAUUSD (Gold)",
+            "BTCUSD": "₿ BTCUSD (Bitcoin)",
+            "EURUSD": "💶 EURUSD (Euro)",
+            "GBPUSD": "💷 GBPUSD (Pound)",
+            "USDJPY": "💴 USDJPY (Yen)"
+        }.get(SYMBOL, f"📊 {SYMBOL}")
+        
         print(f"""
-🏆 Golden Trend Live Demo เริ่มทำงาน
+╔══════════════════════════════════════════════════════════════╗
+║              🏆 Golden Trend Live Demo System                ║
+║                                                              ║
+║               {symbol_display:^46}                ║
+╚══════════════════════════════════════════════════════════════╝
 💰 Initial Balance: ${self.initial_balance:,.2f}
 📊 Symbol: {SYMBOL}
 ⏰ Timeframe: {TIMEFRAME}
@@ -48,6 +61,8 @@ class GoldenTrendLiveDemo:
         try:
             if SYMBOL == "XAUUSD":
                 yahoo_symbol = "GC=F"
+            elif SYMBOL == "BTCUSD":
+                yahoo_symbol = "BTC-USD"  # Bitcoin symbol for Yahoo Finance
             elif SYMBOL == "EURUSD":
                 yahoo_symbol = "EURUSD=X"
             else:

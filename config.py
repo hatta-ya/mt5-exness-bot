@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-SYMBOL = os.getenv("SYMBOL", "EURUSD")
+SYMBOL = os.getenv("SYMBOL", "XAUUSD")
 
 TF_MAP = {
     "M1": 1,

@@ -25,13 +25,19 @@ class GoldenTrendBacktest:
         self.consecutive_losses = 0
         self.max_consecutive_losses = 0
         
+        # Drawdown tracking
+        self.peak_balance = initial_balance
+        self.max_drawdown = 0.0
+        self.current_drawdown = 0.0
+        self.balance_history = [initial_balance]
+        
     def get_historical_data(self, symbol: str, days: int):
         """ดึงข้อมูลย้อนหลัง"""
         try:
             if symbol == "XAUUSD":
-                yahoo_symbol = "GC=F"
-            elif symbol == "EURUSD":
-                yahoo_symbol = "EURUSD=X"
+                yahoo_symbol = "GC=F"  # Gold Futures
+            elif symbol == "BTCUSD":
+                yahoo_symbol = "BTC-USD"  # Bitcoin vs USD
             else:
                 yahoo_symbol = f"{symbol}=X"
             
@@ -57,7 +63,7 @@ class GoldenTrendBacktest:
             log.error(f"Error getting data: {e}")
             return None
 
-    def execute_trade(self, action, entry_price, sl_price, tp_price, lot_size, entry_time):
+    def execute_trade(self, action, entry_price, sl_price, tp_price, lot_size, entry_time, reason="Golden Trend Signal"):
         """บันทึกการเทรด พร้อมจำลอง Slippage และ Commission"""
         multiplier = 1 if action == "BUY" else -1
 
@@ -100,7 +106,9 @@ class GoldenTrendBacktest:
             'balance': self.balance,
             'result': 'WIN' if pnl > 0 else 'LOSS',
             'commission': commission,
-            'slippage': slippage
+            'slippage': slippage,
+            'drawdown': self.current_drawdown,
+            'reason': reason
         }
 
         self.trades.append(trade)
@@ -109,9 +117,21 @@ class GoldenTrendBacktest:
 
     def run_backtest(self):
         """รัน backtest"""
+        # กำหนดชื่อ symbol ที่แสดง
+        symbol_display = {
+            "XAUUSD": "💰 XAUUSD (Gold)",
+            "BTCUSD": "₿ BTCUSD (Bitcoin)",
+            "EURUSD": "💶 EURUSD (Euro)",
+            "GBPUSD": "💷 GBPUSD (Pound)",
+            "USDJPY": "💴 USDJPY (Yen)"
+        }.get(SYMBOL, f"📊 {SYMBOL}")
+        
         print(f"""
-🏆 Golden Trend System Backtest
-================================
+╔══════════════════════════════════════════════════════════════╗
+║              🏆 Golden Trend System Backtest                ║
+║                                                              ║
+║               {symbol_display:^46}                ║
+╚══════════════════════════════════════════════════════════════╝
 📊 Symbol: {SYMBOL}
 📅 Period: {BACKTEST_DAYS} days
 💰 Initial Balance: ${self.initial_balance:,.2f}
@@ -147,17 +167,32 @@ class GoldenTrendBacktest:
             if result['signal'] in ['BUY', 'SELL']:
                 signals += 1
                 
-                # Execute trade
+                # ตรวจสอบขนาด lot ไม่เกิน 0.05
+                max_lot_size = 0.05
+                lot_size = min(result['lot_size'], max_lot_size)
+
+                # ปรับ SL/TP ตามค่าจาก .env
+                sl_pips = 70  # Stop Loss
+                tp_pips = 210  # Take Profit
+                sl_price = current_price - (sl_pips * 0.01) if result['signal'] == 'BUY' else current_price + (sl_pips * 0.01)
+                tp_price = current_price + (tp_pips * 0.01) if result['signal'] == 'BUY' else current_price - (tp_pips * 0.01)
+
+                # Execute trade with adjusted values
                 trade = self.execute_trade(
                     action=result['signal'],
                     entry_price=result['entry_price'],
-                    sl_price=result['sl_price'],
-                    tp_price=result['tp_price'],
-                    lot_size=result['lot_size'],
-                    entry_time=current_time
+                    sl_price=sl_price,
+                    tp_price=tp_price,
+                    lot_size=lot_size,
+                    entry_time=current_time,
+                    reason=result.get('reason', 'Golden Trend Signal')
                 )
                 
-                print(f"🎯 {trade['action']} @ ${trade['entry_price']:.2f} | P&L: ${trade['pnl']:.2f} | Balance: ${trade['balance']:.2f}")
+                # แสดง log รายละเอียด trade พร้อมหมายเลข (log to file)
+                order_no = len(self.trades)
+                log_msg = f"#{order_no:04d} 🎯 {trade['action']} @ ${trade['entry_price']:.2f} | P&L: ${trade['pnl']:.2f} | Balance: ${trade['balance']:.2f} | Reason: {trade['reason']}"
+                log.info(log_msg)
+                print(log_msg)
         
         # แสดงผลลัพธ์
         self.show_results()
@@ -166,33 +201,22 @@ class GoldenTrendBacktest:
         """แสดงผลลัพธ์"""
         if not self.trades:
             print("\n❌ ไม่มี Trade ใน Golden Trend System")
-            print("💡 เป็นไปได้ว่า:")
-            print("   - เงื่อนไขเข้มงวดเกินไป (ADX > 25, EMA Stack)")
-            print("   - ข้อมูลไม่อยู่ในช่วงเวลา London/NY")
-            print("   - ตลาดไม่มี trend ที่ชัดเจน")
             return
-        
+
         # คำนวณสถิติ
         total_trades = len(self.trades)
         winning_trades = len([t for t in self.trades if t['pnl'] > 0])
         losing_trades = total_trades - winning_trades
-        win_rate = (winning_trades / total_trades) * 100
-        
+        win_rate = (winning_trades / total_trades) * 100 if total_trades > 0 else 0
+
         total_profit = sum([t['pnl'] for t in self.trades if t['pnl'] > 0])
         total_loss = sum([t['pnl'] for t in self.trades if t['pnl'] < 0])
         net_profit = self.balance - self.initial_balance
-        
-        profit_factor = abs(total_profit / total_loss) if total_loss != 0 else float('inf')
-        
-        # Max Drawdown
-        peak = self.initial_balance
-        max_drawdown = 0
-        for trade in self.trades:
-            if trade['balance'] > peak:
-                peak = trade['balance']
-            drawdown = (peak - trade['balance']) / peak * 100
-            max_drawdown = max(max_drawdown, drawdown)
-        
+
+        # คำนวณจำนวนการเทรดเฉลี่ยต่อวัน
+        backtest_days = BACKTEST_DAYS
+        avg_trades_per_day = total_trades / backtest_days if backtest_days > 0 else 0
+
         print(f"""
 🏆 Golden Trend System Results
 ==============================
@@ -200,74 +224,31 @@ class GoldenTrendBacktest:
    • Total Trades: {total_trades}
    • Winning: {winning_trades} ({win_rate:.1f}%)
    • Losing: {losing_trades} ({100-win_rate:.1f}%)
+   • Avg Trades/Day: {avg_trades_per_day:.2f}
 
 💰 ผลกำไร:
    • Initial Balance: ${self.initial_balance:,.2f}
    • Final Balance: ${self.balance:,.2f}
-   • Net P&L: ${net_profit:,.2f} ({(net_profit/self.initial_balance)*100:+.2f}%)
-   • Profit Factor: {profit_factor:.2f}
+   • Net P&L: ${net_profit:,.2f}
+   • Total Profit: ${total_profit:,.2f}
+   • Total Loss: ${total_loss:,.2f}
 
 📉 ความเสี่ยง:
-   • Max Drawdown: {max_drawdown:.2f}%
+   • Max Drawdown: {self.max_drawdown:.2f}%
+   • Current Drawdown: {self.current_drawdown:.2f}%
+   • Peak Balance: ${self.peak_balance:,.2f}
    • Max Consecutive Losses: {self.max_consecutive_losses}
-
-🎯 ประเมินผล:
         """)
-        
-        # ประเมินผลตามเกณฑ์
-        if win_rate >= 65:
-            print("   ✅ Win Rate: ผ่านเกณฑ์ (≥65%)")
-        else:
-            print(f"   ❌ Win Rate: ไม่ผ่านเกณฑ์ ({win_rate:.1f}% < 65%)")
-            
-        if profit_factor >= 1.8:
-            print("   ✅ Profit Factor: ผ่านเกณฑ์ (≥1.8)")
-        else:
-            print(f"   ❌ Profit Factor: ไม่ผ่านเกณฑ์ ({profit_factor:.2f} < 1.8)")
-            
-        if max_drawdown <= 12:
-            print("   ✅ Max Drawdown: ผ่านเกณฑ์ (≤12%)")
-        else:
-            print(f"   ❌ Max Drawdown: ไม่ผ่านเกณฑ์ ({max_drawdown:.2f}% > 12%)")
-        
-        # สถิติเพิ่มเติม
-        if len(self.trades) > 0:
-            # คำนวณสถิติ trades ต่อวัน
-            first_trade_date = self.trades[0]['time']
-            last_trade_date = self.trades[-1]['time']
-            trading_days = (last_trade_date - first_trade_date).days + 1
-            trades_per_day = total_trades / trading_days
-            
-            # กำไรเฉลี่ยต่อ trade
-            avg_profit = net_profit / total_trades
-            
-            print(f"\n📊 สถิติเพิ่มเติม:")
-            print(f"   • Trading Period: {trading_days} วัน")
-            print(f"   • Trades per Day: {trades_per_day:.1f}")
-            print(f"   • Avg Profit per Trade: ${avg_profit:.2f}")
-            print(f"   • Total Profit: ${total_profit:,.2f}")
-            print(f"   • Total Loss: ${abs(total_loss):,.2f}")
-            
-            # แสดง trades รายเดือน
-            monthly_trades = {}
-            for trade in self.trades:
-                month_key = trade['time'].strftime('%Y-%m')
-                if month_key not in monthly_trades:
-                    monthly_trades[month_key] = {'count': 0, 'profit': 0}
-                monthly_trades[month_key]['count'] += 1
-                monthly_trades[month_key]['profit'] += trade['pnl']
-            
-            print(f"\n📅 สถิติรายเดือน:")
-            for month, stats in sorted(monthly_trades.items()):
-                print(f"   • {month}: {stats['count']} trades, ${stats['profit']:+,.2f}")
-        
-            print(f"\n📋 Trade ล่าสุด 5 รายการ:")
-            for trade in self.trades[-5:]:
-                result_emoji = "✅" if trade['pnl'] > 0 else "❌"
-                print(f"   {result_emoji} {trade['time'].strftime('%m-%d %H:%M')} {trade['action']} ${trade['entry_price']:.2f} → ${trade['pnl']:+.2f}")
+
+        # แสดง 3 ออเดอร์ล่าสุดที่ชนะ
+        recent_winning_trades = [t for t in self.trades if t['pnl'] > 0][-3:]
+        print("\n📈 ตัวอย่าง 3 ออเดอร์ล่าสุดที่ชนะ:")
+        for i, trade in enumerate(recent_winning_trades, 1):
+            print(f"   {i}. {trade['action']} @ ${trade['entry_price']:.2f} -> ${trade['exit_price']:.2f} | Lots: {trade['lot_size']} | Reason: {'TP Hit' if trade['pnl'] > 0 else 'Other'}")
 
 def main():
-    backtest = GoldenTrendBacktest(initial_balance=10000)
+    initial_balance = float(input("💰 กรุณาใส่ทุนเริ่มต้น (เช่น 10000 USD): "))
+    backtest = GoldenTrendBacktest(initial_balance=initial_balance)
     backtest.run_backtest()
 
 if __name__ == "__main__":

@@ -1,27 +1,21 @@
 #!/usr/bin/env python3
 """
-🚀 MT5 Forex Trading Bot - Main Launcher
-ดับเบิลคลิกเพื่อเริ่มใช้งาน
+🚀 MT5 Forex Trading Bot - Main Launcher (inside src package)
 """
 
 import sys
 import os
-import subprocess
 import time
+import importlib
 from datetime import datetime
 
 def clear_screen():
-    """ล้างหน้าจอ"""
     os.system('clear')
 
 def print_banner():
-    """แสดงแบนเนอร์"""
-    # โหลด SYMBOL จาก .env
     from dotenv import load_dotenv
     load_dotenv()
     symbol = os.getenv("SYMBOL", "XAUUSD")
-    
-    # กำหนดชื่อ symbol ที่แสดง
     symbol_display = {
         "XAUUSD": "XAUUSD (Gold)",
         "BTCUSD": "BTCUSD (Bitcoin)",
@@ -29,7 +23,6 @@ def print_banner():
         "GBPUSD": "GBPUSD (Pound)",
         "USDJPY": "USDJPY (Yen)"
     }.get(symbol, symbol)
-    
     print(f"""
 ╔══════════════════════════════════════════════════════════════╗
 ║                  🚀 MT5 Forex Trading Bot                    ║
@@ -43,7 +36,6 @@ def print_banner():
     print("=" * 60)
 
 def check_dependencies():
-    """ตรวจสอบ dependencies"""
     try:
         import pandas
         import numpy
@@ -56,59 +48,41 @@ def check_dependencies():
         print("🔧 Please install: pip install -r requirements.txt")
         return False
 
-def show_menu():
-    """แสดงเมนูหลัก"""
+def show_menu(available_scripts):
     print("\n🎯 เลือกโหมดการใช้งาน:")
     print("=" * 40)
-    print("1. 🏆 Golden Trend Live Demo")
-    print("2. 🔍 Test Golden Trend System")  
-    print("3. 🟢 REAL TRADING (เงินจริง)")
-    print("4. 📈 Golden Trend Backtest")
-    print("5. ⚙️ Settings (.env)")
-    print("6. 📊 View Current Config")
+    for i, (label, _) in enumerate(available_scripts, start=1):
+        print(f"{i}. {label}")
+    base = len(available_scripts)
+    print(f"{base+1}. ⚙️ Settings (.env)")
+    print(f"{base+2}. 📊 View Current Config")
     print("0. ❌ Exit")
     print("=" * 40)
 
-def run_script(script_name, description):
-    """รันสคริปต์"""
+def run_script(script_name, description, script_dir):
+    """Run a moved script by importing its module and calling main() if available"""
     print(f"\n🔄 กำลังรัน {description}...")
     print("=" * 50)
-    
+
     try:
-        # รันสคริปต์ใน virtual environment - ใช้ path ปัจจุบัน
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        venv_python = os.path.join(current_dir, ".venv", "bin", "python")
-        
-        if os.path.exists(venv_python):
-            cmd = [venv_python, script_name]
+        module_name = os.path.splitext(script_name)[0]
+        full_module = f"src.{module_name}"
+        mod = importlib.import_module(full_module)
+        if hasattr(mod, 'main'):
+            mod.main()
         else:
-            cmd = ["python3", script_name]
-        
-        process = subprocess.run(cmd, check=True)
-        
-        if process.returncode == 0:
-            print(f"\n✅ {description} เสร็จสิ้น")
-        else:
-            print(f"\n❌ {description} เกิดข้อผิดพลาด")
-            
-    except subprocess.CalledProcessError as e:
-        print(f"\n❌ Error: {e}")
-    except KeyboardInterrupt:
-        print(f"\n🛑 {description} ถูกหยุดโดยผู้ใช้")
+            print(f"❌ Module {full_module} ไม่มีฟังก์ชัน main()")
     except Exception as e:
-        print(f"\n❌ Unexpected error: {e}")
-    
+        print(f"\n❌ Error while running {description}: {e}")
+
     input("\n📱 กด Enter เพื่อกลับเมนูหลัก...")
 
 def show_settings():
-    """แสดงการตั้งค่า"""
     print("\n⚙️ การตั้งค่าปัจจุบัน:")
     print("=" * 40)
-    
     try:
         with open(".env", "r", encoding="utf-8") as f:
             lines = f.readlines()
-            
         for line in lines:
             line = line.strip()
             if line and not line.startswith("#"):
@@ -117,65 +91,66 @@ def show_settings():
         print("❌ ไม่พบไฟล์ .env")
     except Exception as e:
         print(f"❌ Error: {e}")
-    
     input("\n📱 กด Enter เพื่อกลับเมนูหลัก...")
 
 def edit_settings():
-    """แก้ไขการตั้งค่า"""
     print("\n⚙️ แก้ไขการตั้งค่า:")
     print("=" * 30)
     print("💡 เปิดไฟล์ .env ด้วย TextEdit...")
-    
     try:
+        import subprocess
         subprocess.run(["open", "-a", "TextEdit", ".env"])
         print("✅ เปิดไฟล์ .env แล้ว")
-        print("📝 แก้ไขแล้วบันทึก จากนั้นรันโปรแกรมใหม่")
     except Exception as e:
         print(f"❌ Error: {e}")
-    
     input("\n📱 กด Enter เพื่อกลับเมนูหลัก...")
 
 def main():
-    """ฟังก์ชันหลัก"""
-    # เปลี่ยน directory ไปที่โฟลเดอร์โปรแกรม
+    # ensure cwd is package src directory
     script_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(script_dir)
-    
+
     while True:
         clear_screen()
         print_banner()
-        
-        # ตรวจสอบ dependencies
         if not check_dependencies():
             input("\n📱 กด Enter เพื่อออก...")
             sys.exit(1)
-        
-        show_menu()
-        
+
+        candidate_scripts = [
+            ("📈 Golden Trend Backtest", "golden_backtest.py"),
+        ]
+
+        available_scripts = [(label, fname) for (label, fname) in candidate_scripts if os.path.exists(os.path.join(script_dir, fname))]
+
+        show_menu(available_scripts)
+
         try:
-            choice = input("\n🎯 เลือก (0-6): ").strip()
-            
-            if choice == "1":
-                run_script("golden_live_demo.py", "🏆 Golden Trend Live Demo")
-            elif choice == "2":
-                run_script("test_golden_trend.py", "🔍 Golden Trend System Test")
-            elif choice == "3":
-                run_script("real_trading.py", "🔴 REAL TRADING")
-            elif choice == "4":
-                run_script("golden_backtest.py", "🏆 Golden Trend Backtest")
-            elif choice == "5":
-                edit_settings()
-            elif choice == "6":
-                show_settings()
-            elif choice == "0":
-                clear_screen()
-                print("👋 ขอบคุณที่ใช้งาน MT5 Forex Trading Bot!")
-                print("🎯 Happy Trading!")
-                sys.exit(0)
-            else:
-                print("❌ กรุณาเลือก 0-6 เท่านั้น")
-                time.sleep(2)
-                
+            choice = input("\n🎯 เลือก: ").strip()
+            if choice.isdigit():
+                num = int(choice)
+                if num == 0:
+                    clear_screen()
+                    print("👋 ขอบคุณที่ใช้งาน MT5 Forex Trading Bot!")
+                    print("🎯 Happy Trading!")
+                    sys.exit(0)
+
+                scripts_count = len(available_scripts)
+                if 1 <= num <= scripts_count:
+                    label, fname = available_scripts[num-1]
+                    run_script(fname, label, script_dir)
+                    continue
+
+                if num == scripts_count + 1:
+                    edit_settings()
+                    continue
+                if num == scripts_count + 2:
+                    show_settings()
+                    continue
+
+            print("❌ การเลือกไม่ถูกต้อง — กรุณาเลือกหมายเลขที่แสดงในเมนู")
+            time.sleep(2)
+
         except KeyboardInterrupt:
             clear_screen()
             print("\n👋 ขอบคุณที่ใช้งาน!")

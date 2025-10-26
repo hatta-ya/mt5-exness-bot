@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from config import EMA_SHORT, EMA_LONG
+from .config import EMA_SHORT, EMA_LONG
 from datetime import datetime, time as dt_time
 
 def calculate_indicators(df: pd.DataFrame):

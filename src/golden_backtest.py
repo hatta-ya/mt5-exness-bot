@@ -9,9 +9,9 @@ import yfinance as yf
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import numpy as np
-from config import SYMBOL, RISK_PERCENT, BACKTEST_DAYS
-from strategy import golden_trend_system
-from utils.logger import get_logger
+from .config import SYMBOL, RISK_PERCENT, BACKTEST_DAYS
+from .strategy import golden_trend_system
+from .utils.logger import get_logger
 
 log = get_logger("golden_backtest")
 

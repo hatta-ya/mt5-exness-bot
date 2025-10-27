@@ -25,10 +25,10 @@ def print_banner():
     }.get(symbol, symbol)
     print(f"""
 ╔══════════════════════════════════════════════════════════════╗
-║                  🚀 MT5 Forex Trading Bot                    ║
+║                    MT5 Forex Trading Bot                     ║
 ║                     macOS Demo Version                       ║
 ║                                                              ║
-║               💰 {symbol_display:^30}                ║
+║                        {symbol_display}                         ║
 ╚══════════════════════════════════════════════════════════════╝
     """)
     print(f"📅 วันที่: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -126,7 +126,7 @@ def main():
         show_menu(available_scripts)
 
         try:
-            choice = input("\n🎯 เลือก: ").strip()
+            choice = input("\n🎯 เลือก [0-3]: ").strip()
             if choice.isdigit():
                 num = int(choice)
                 if num == 0:

@@ -1,0 +1,21 @@
+2025-11-03 12:10:50,022 | INFO | golden_backtest | #0001 🎯 BUY @ $2687.89 | P&L: $-15.23 | Balance: $984.77 | Reason: SL Hit
+2025-11-03 12:10:50,040 | INFO | golden_backtest | #0002 🎯 BUY @ $2681.11 | P&L: $-14.77 | Balance: $970.00 | Reason: SL Hit
+2025-11-03 12:10:50,105 | INFO | golden_backtest | #0003 🎯 BUY @ $2680.26 | P&L: $-14.89 | Balance: $955.11 | Reason: SL Hit
+2025-11-03 12:17:26,198 | INFO | mt5_trader | ✅ Connected to MT5
+2025-11-03 12:17:26,198 | INFO | mt5_trader | 📊 Account: 279250789
+2025-11-03 12:17:26,198 | INFO | mt5_trader | 💰 Balance: $129948.12
+2025-11-03 12:17:26,199 | INFO | mt5_trader | 📈 Equity: $129948.12
+2025-11-03 12:17:26,199 | INFO | mt5_trader | 🌐 Server: Exness-MT5Trial8
+2025-11-03 12:17:27,868 | INFO | mt5_trader | 💡 Calculated lot size: 0.1 for risk 1.5%
+2025-11-03 12:17:27,868 | ERROR | mt5_trader | Order failed: 10027 - AutoTrading disabled by client
+2025-11-03 12:18:01,979 | INFO | mt5_trader | 🔌 Disconnected from MT5
+2025-11-03 12:19:03,173 | INFO | mt5_trader | ✅ Connected to MT5
+2025-11-03 12:19:03,173 | INFO | mt5_trader | 📊 Account: 206523111
+2025-11-03 12:19:03,174 | INFO | mt5_trader | 💰 Balance: $300.00
+2025-11-03 12:19:03,174 | INFO | mt5_trader | 📈 Equity: $300.00
+2025-11-03 12:19:03,174 | INFO | mt5_trader | 🌐 Server: Exness-MT5Trial7
+2025-11-03 12:24:13,222 | INFO | mt5_trader | ✅ Connected to MT5
+2025-11-03 12:24:13,222 | INFO | mt5_trader | 📊 Account: 206523111
+2025-11-03 12:24:13,222 | INFO | mt5_trader | 💰 Balance: $300.00
+2025-11-03 12:24:13,222 | INFO | mt5_trader | 📈 Equity: $300.00
+2025-11-03 12:24:13,222 | INFO | mt5_trader | 🌐 Server: Exness-MT5Trial7

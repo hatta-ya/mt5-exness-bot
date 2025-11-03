@@ -79,265 +79,114 @@ cp .env.example .env### 3. Run Trading Bot:```bash
 
 ````
 
-`````bashpython main.py
+````bashpython main.py
 
 ### 3. Launch Golden Trend System:
 
 ### 3. Quick Start:
+# 🏆 Golden Trend Trading System (macOS Demo)
 
-```bash
+Golden Trend is a multi-indicator strategy and demo trading/backtesting framework focused on XAUUSD (Gold) in this repository. The code supports indicator calculation, ATR-based dynamic SL/TP, position sizing by risk percent, and a simple backtest engine that uses Yahoo Finance for historical data.
 
-# Main menu launcher (recommended)```bash
+This README has been updated to match the repository's current structure and defaults (XAUUSD).
 
-python run_bot.py# Main menu launcher
+## Quick overview
 
-python run_bot.py
+- Default instrument: XAUUSD (Gold)
+- Strategy: EMA(20,50,200) trend + MACD + RSI + ADX confirmation + ATR-based SL/TP
+- Position sizing: percent risk per trade (default 1.5%) with a helper to convert SL distance into lots
+- Backtesting: `src/golden_backtest.py` (uses Yahoo Finance via `yfinance`)
+- Launcher / menu: `src/run_bot.py`
 
-# Direct commands:
+## Files you care about
 
-python golden_live_demo.py     # Live trading demo# Golden Trend Live Demo
+- `src/strategy.py` — core strategy and indicator calculations
+- `src/golden_backtest.py` — backtest runner and P&L simulation
+- `src/run_bot.py` — simple CLI launcher (menu)
+- `src/config.py` — loads `.env` configuration into Python variables
+- `src/utils/logger.py` — logging helper
+- `.env` — runtime settings (symbol, timeframe, sizing, risk, etc.)
+- `requirements.txt` — Python dependencies
 
-python golden_backtest.py      # Comprehensive backtesting  python golden_live_demo.py
+## Important `.env` keys (defaults used by the project)
 
-python test_golden_trend.py    # Strategy testing
+Edit `.env` to change behavior. Key values used by the code:
 
-```# Golden Trend Backtest
+- `SYMBOL` — instrument symbol (MT5 style). Default in repo: `XAUUSD`
+- `TIMEFRAME` — timeframe short code, e.g. `H4`
+- `LOT` — fallback lot
+- `SL_PIPS`, `TP_PIPS` — fallback SL/TP in pips (used if strategy doesn't return explicit prices)
+- `RISK_PERCENT` — percent of account to risk per trade (default 1.5)
+- `BACKTEST_DAYS` — how many days of history to request from Yahoo Finance
 
-python golden_backtest.py
+Instrument sizing (used for lot sizing and P&L):
+- `POINT_SIZE` — price move equivalent to one point/pip. For XAUUSD the repo defaults to `0.01`.
+- `VALUE_PER_PIP_PER_LOT` — USD value per 1 point for 1 standard lot. For XAUUSD default is `1.0` in this repo.
 
-## 📁 **File Structure:**
-
-# Test Golden Trend System
-
-```python test_golden_trend.py
-
-📁 Golden Trend System (Core):```
-
-├── run_bot.py              # 🚀 Main launcher menu
-
-├── golden_live_demo.py     # 🏆 Live trading bot
-
-├── golden_backtest.py      # 📈 Comprehensive backtesting
-
-├── test_golden_trend.py    # 🔍 Strategy testing
-
-├── strategy.py             # 🎯 Golden Trend System# Analyze strategy## Troubleshooting
-
-├── config.py               # ⚙️ Configuration loader
-
-├── risk.py                 # 🛡️ Risk managementpython analyze_strategy.py- ถ้า `MetaTrader5.initialize()` ล้มเหลว: ให้เปิด MT5 ไว้ และตรวจสอบว่าใช้ MT5 64-bit ตรงกับไลบรารี
-
-├── real_trading.py         # 💰 Live trading (when ready)
-
-├── .env                    # 📝 Settings file```- ถ้า `symbol_info` เป็น `None` หรือ `visible=False`: ตั้งค่า Market Watch ให้โชว์สัญลักษณ์ หรือให้ `trader.ensure_symbol(symbol)` ทำงานก่อน
-
-├── gui_launcher.py         # 🖥️ GUI launcher
-
-└── utils/logger.py         # 📋 Logging system- ถ้า order ไม่ถูกส่ง: ตรวจสอบ `result.comment` และ `result.retcode` ใน log
-
-
-
-📁 Configuration:## 📁 **File Structure:**
-
-├── requirements.txt        # Python dependencies
-
-├── .env.example           # Settings template```## คำเตือนด้านความเสี่ยง
-
-└── README.md              # This file
-
-```📁 Core Files (Required):การเทรดมีความเสี่ยงสูง โปรเจกต์นี้เพื่อการศึกษา ผู้ใช้รับผิดชอบผลลัพธ์เองทั้งหมด
-
-
-
-## ⚙️ **Configuration (.env):**├── live_demo.py       # Main live trading bot
-
-├── config.py          # Configuration loader
-
-```bash├── strategy.py        # EMA crossover strategy
-
-# Trading Parameters├── risk.py           # Risk management
-
-SYMBOL=XAUUSD├── .env              # Settings file
-
-TIMEFRAME=D1└── utils/logger.py   # Logging system
-
-LOT=0.01
-
-RISK_PERCENT=1.5📁 Testing/Analysis:
-
-├── backtest_mac.py    # Historical backtesting
-
-# Golden Trend Indicators├── demo_mode.py       # Quick demo run
-
-EMA_SHORT=20└── analyze_strategy.py # Strategy analysis
-
-EMA_LONG=50
-
-EMA_VERY_LONG=200📁 Configuration:
-
-MACD_FAST=12├── requirements.txt   # Python dependencies
-
-MACD_SLOW=26└── .env.example      # Settings template
-
-MACD_SIGNAL=9````
-
-RSI_PERIOD=14
-
-ADX_PERIOD=14## ⚙️ **Configuration (.env):**
-
-ATR_PERIOD=14
-
-```bash
-
-# Risk Management# Trading Parameters
-
-DAILY_PROFIT_TARGET=5.0SYMBOL=XAUUSD
-
-DAILY_DRAWDOWN_LIMIT=3.0TIMEFRAME=D1
-
-MAX_OPEN_TRADES=1LOT=0.01
-
-SL_PIPS=50
-
-# BacktestingTP_PIPS=100
-
-BACKTEST_DAYS=120
-
-```# Risk Management
-
-DAILY_PROFIT_TARGET=2.0
-
-## 🏆 **Backtest Results (Golden Trend System):**DAILY_DRAWDOWN_LIMIT=2.0
-
-MAX_OPEN_TRADES=1
+Example: `.env` excerpt (already in repo):
 
 ```
-
-📊 Performance Summary:# Strategy
-
-• Total Trades: 1,538EMA_SHORT=9
-
-• Win Rate: 100.0% EMA_LONG=21
-
-• Net P&L: $400,275 (+4,002.75%)
-
-• Profit Factor: ∞ (no losses)# Backtest
-
-• Max Drawdown: 0.00%BACKTEST_DAYS=90
-
-• Trading Period: 157 days```
-
-• Trades per Day: 9.8
-
-## 📊 **Backtest Results:**
-
-✅ All Target Criteria Met:
-
-• Win Rate ≥ 65% ✓ (100%)- **ROI**: +1.25% (90 days)
-
-• Profit Factor ≥ 1.8 ✓ (∞)- **Win Rate**: 75% (3/4 trades)
-
-• Max Drawdown ≤ 12% ✓ (0%)- **Risk/Reward**: 2:1
-
-```- **Max Drawdown**: -$25
-
-
-
-## 📊 **Menu Options:**## 🎮 **Controls:**
-
-
-
-```- **Start**: `python live_demo.py`
-
-🎯 Golden Trend System Menu:- **Stop**: `Ctrl+C`
-
-1. 🏆 Golden Trend Live Demo- **View Status**: Real-time updates every 10 seconds
-
-2. 🔍 Test Golden Trend System
-
-3. 🟢 REAL TRADING (เงินจริง)## ⚠️ **Important Notes:**
-
-4. 📈 Golden Trend Backtest
-
-5. ⚙️ Settings (.env)- This is a **DEMO VERSION** for macOS
-
-6. 📊 View Current Config- Uses **Yahoo Finance** data (not real-time tick data)
-
-0. ❌ Exit- For **live trading**, migrate to Windows + MT5
-
-```- **No real money** involved in demo mode
-
-
-
-## 🎮 **Controls:**## 🔄 **Migration to Live Trading:**
-
-
-
-- **Start Menu**: `python run_bot.py`1. Move to Windows environment
-
-- **Stop Any Process**: `Ctrl+C`2. Install MetaTrader 5
-
-- **View Logs**: Check `logs/` directory3. Add MT5 connection credentials to `.env`
-
-- **Edit Settings**: Use menu option 5 or edit `.env` directly4. Use original MT5-based files (not included in this demo)
-
-
-
-## ⚠️ **Important Notes:**## 📞 **Support:**
-
-
-
-- This is a **DEMO VERSION** for macOSThis demo version is for **testing and strategy development** purposes only.
-
-- Uses **Yahoo Finance** data (not real-time tick data)
-
-- **Golden Trend System** provides advanced multi-indicator analysis---
-
-- For **live trading**, use `real_trading.py` when ready
-
-- **Demo mode** uses simulated balance ($10,000 starting)🎯 **Happy Trading!** 🚀
-
-
-## 🧪 **Testing & Validation:**
-
-```bash
-# Test individual components:
-python test_golden_trend.py    # Strategy validation
-python golden_backtest.py      # Historical performance
-python golden_live_demo.py     # Real-time simulation
+SYMBOL=XAUUSD
+TIMEFRAME=H4
+POINT_SIZE=0.01
+VALUE_PER_PIP_PER_LOT=1.0
+RISK_PERCENT=1.5
+BACKTEST_DAYS=365
 ```
 
-## 🔄 **System Requirements:**
+## How to run
 
-- **Python**: 3.9+ (recommended 3.11+)
-- **OS**: macOS (Linux/Windows compatible)
-- **Memory**: 512MB+ RAM
-- **Internet**: Required for Yahoo Finance data
+Install dependencies (prefer a venv):
 
-## 📈 **Golden Trend Algorithm:**
+```bash
+python3 -m pip install -r requirements.txt
+```
 
-The Golden Trend System uses sophisticated multi-indicator analysis:
+Run the interactive launcher (recommended):
 
-1. **Trend Detection**: Triple EMA alignment (20>50>200 for uptrend)
-2. **Momentum Confirmation**: MACD crossover signals
-3. **Strength Validation**: RSI within 30-70 range
-4. **Trend Strength**: ADX > 20 for strong trends
-5. **Dynamic Risk**: ATR-based stop loss and take profit
-6. **Volume Confirmation**: When available from data source
+```bash
+python3 src/run_bot.py
+```
 
-## 🛡️ **Risk Management:**
+From the launcher choose "Golden Trend Backtest" to run the backtest with your `.env` settings.
 
-- **Position Sizing**: 1.5% account risk per trade
-- **Dynamic SL/TP**: Based on ATR volatility
-- **Daily Limits**: Profit target and drawdown limits
-- **Max Positions**: Single position limit
-- **Trend Following**: Only trades in direction of major trend
+You can also run the backtest directly:
 
-## 📞 **Support:**
+```bash
+python3 -m src.golden_backtest
+```
 
-This Golden Trend System is designed for **educational and strategy development** purposes. The system has been thoroughly backtested and optimized for XAUUSD trading.
+The backtest downloads historical data from Yahoo Finance (hourly bars by default), calculates indicators, generates signals, simulates entries/exits, and prints a performance summary.
 
----
+## Notes on instrument support
 
-🎯 **Happy Trading with Golden Trend System!** 🏆🚀
-`````
+- The code contains helpers to support different instruments by configuring `POINT_SIZE` and `VALUE_PER_PIP_PER_LOT` in `.env`.
+- The repository is configured by default for XAUUSD (point size 0.01, value per point ≈ $1). If you change to forex pairs (e.g., `GBPUSD`), update `POINT_SIZE=0.0001` and `VALUE_PER_PIP_PER_LOT=10.0` accordingly.
+
+## What I changed recently (summary)
+
+- Added a safe `calculate_lot_size()` helper in `src/strategy.py` that converts SL distance to pips and computes lot size using dollar risk per lot.
+- Wired `POINT_SIZE` and `VALUE_PER_PIP_PER_LOT` from `.env` into `src/config.py` and used them in backtest P&L calculations.
+- Reverted repository defaults to XAUUSD per your request.
+
+## Tips & next steps
+
+- To test a different starting balance, run `src/golden_backtest.py` directly and input the starting balance prompt.
+- If you plan to live trade with MetaTrader5, move to Windows and use the MT5-specific modules; this demo uses Yahoo Finance and is not a live execution engine.
+- Consider increasing `BACKTEST_DAYS` or adding more data history to improve the statistical significance of results.
+
+## Disclaimer
+
+Trading is risky. This project is for educational and strategy development only. You are responsible for testing, verifying, and using the code.
+
+------
+
+If you'd like, I can:
+
+- Run a quick backtest with the current `.env` and paste the results here.
+- Update the README further with examples of typical `.env` configurations for other instruments (FX, XAUUSD).
+- Add small unit tests for the lot-sizing helper.
+
+Tell me which you want next.
+
+````

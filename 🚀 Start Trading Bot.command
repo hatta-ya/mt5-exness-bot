@@ -11,10 +11,11 @@ cd "$(dirname "$0")"
 # ตรวจสอบว่ามี virtual environment หรือไม่
 if [ -d ".venv" ]; then
     echo "✅ Using virtual environment..."
-    .venv/bin/python run_bot.py
+    # Run the package entrypoint as a module so package imports work
+    .venv/bin/python -m src.run_bot
 else
     echo "⚙️ Using system Python..."
-    python3 run_bot.py
+    python3 -m src.run_bot
 fi
 
 # รอให้ผู้ใช้กด Enter ก่อนปิด Terminal

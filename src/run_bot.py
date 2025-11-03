@@ -30,13 +30,13 @@ def print_banner():
     print(f"""
 ╔══════════════════════════════════════════════════════════════╗
 ║                    MT5 Forex Trading Bot                     ║
-║                     macOS Demo Version                       ║
+║                         Demo Version                         ║
 ║                                                              ║
-║                        {symbol_display}                         ║
+║                         {symbol_display}                        ║
 ╚══════════════════════════════════════════════════════════════╝
     """)
     print(f"📅 วันที่: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print(f"💻 ระบบ: macOS Compatible")
+    print(f"💻 ระบบ: Windows")
     print("=" * 60)
 
 def check_dependencies():

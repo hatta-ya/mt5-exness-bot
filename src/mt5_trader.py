@@ -268,9 +268,9 @@ class MT5Trader:
         """รันการซื้อขายจริง"""
         print(f"""
 ╔══════════════════════════════════════════════════════════════╗
-║                     🚀 MT5 Live Trading                     ║
+║                        MT5 Live Trading                      ║
 ║                                                              ║
-║                   💰 {SYMBOL} Golden Trend System                   ║
+║                    {SYMBOL} Golden Trend System              ║
 ╚══════════════════════════════════════════════════════════════╝
 📊 Symbol: {SYMBOL}
 📅 Timeframe: {TIMEFRAME}

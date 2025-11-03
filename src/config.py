@@ -41,3 +41,13 @@ MT5_SERVER = os.getenv("MT5_SERVER")
 POINT_SIZE = float(os.getenv("POINT_SIZE", "0.01"))
 VALUE_PER_PIP_PER_LOT = float(os.getenv("VALUE_PER_PIP_PER_LOT", "1.0"))
 INSTRUMENT_TYPE = os.getenv("INSTRUMENT_TYPE", "XAU")
+
+# Notifications
+NOTIFICATIONS_ENABLE = os.getenv("NOTIFICATIONS_ENABLE", "false").lower() in ("1", "true", "yes")
+NOTIFICATIONS_LOG_PATH = os.getenv("NOTIFICATIONS_LOG_PATH", "logs/notifications.log")
+
+# Aggregate close (close all positions when combined profit reaches this USD amount)
+AGGREGATE_CLOSE_ENABLED = os.getenv("AGGREGATE_CLOSE_ENABLED", "true").lower() in ("1", "true", "yes")
+AGGREGATE_CLOSE_PROFIT_USD = float(os.getenv("AGGREGATE_CLOSE_PROFIT_USD", "5.0"))
+AGGREGATE_CLOSE_RETRY_ATTEMPTS = int(os.getenv("AGGREGATE_CLOSE_RETRY_ATTEMPTS", "3"))
+AGGREGATE_CLOSE_RETRY_BACKOFF_SECONDS = float(os.getenv("AGGREGATE_CLOSE_RETRY_BACKOFF_SECONDS", "2.0"))

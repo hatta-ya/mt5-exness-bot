@@ -35,3 +35,217 @@
 2025-11-03 13:33:55,141 | INFO | mt5_trader | 📈 Equity: $300.00
 2025-11-03 13:33:55,142 | INFO | mt5_trader | 🌐 Server: Exness-MT5Trial7
 2025-11-03 13:34:00,875 | INFO | mt5_trader | 🔌 Disconnected from MT5
+2025-11-03 13:34:31,632 | INFO | golden_backtest | #0001 🎯 BUY @ $2687.76 | P&L: $-15.22 | Balance: $984.78 | Reason: SL Hit
+2025-11-03 13:34:31,650 | INFO | golden_backtest | #0002 🎯 BUY @ $2681.13 | P&L: $-15.02 | Balance: $969.76 | Reason: SL Hit
+2025-11-03 13:34:31,711 | INFO | golden_backtest | #0003 🎯 BUY @ $2680.10 | P&L: $-14.55 | Balance: $955.20 | Reason: SL Hit
+2025-11-03 13:36:54,988 | INFO | mt5_trader | ✅ Connected to MT5
+2025-11-03 13:36:54,989 | INFO | mt5_trader | 📊 Account: 206523111
+2025-11-03 13:36:54,989 | INFO | mt5_trader | 💰 Balance: $300.00
+2025-11-03 13:36:54,989 | INFO | mt5_trader | 📈 Equity: $300.00
+2025-11-03 13:36:54,989 | INFO | mt5_trader | 🌐 Server: Exness-MT5Trial7
+2025-11-03 13:37:50,059 | INFO | mt5_trader | 🔌 Disconnected from MT5
+2025-11-03 13:37:52,587 | INFO | mt5_trader | ✅ Connected to MT5
+2025-11-03 13:37:52,587 | INFO | mt5_trader | 📊 Account: 206523111
+2025-11-03 13:37:52,587 | INFO | mt5_trader | 💰 Balance: $300.00
+2025-11-03 13:37:52,587 | INFO | mt5_trader | 📈 Equity: $300.00
+2025-11-03 13:37:52,587 | INFO | mt5_trader | 🌐 Server: Exness-MT5Trial7
+2025-11-03 13:49:34,883 | INFO | mt5_trader | 🔌 Disconnected from MT5
+2025-11-03 13:58:38,159 | INFO | mt5_trader | ✅ Connected to MT5
+2025-11-03 13:58:38,159 | INFO | mt5_trader | 📊 Account: 206523111
+2025-11-03 13:58:38,159 | INFO | mt5_trader | 💰 Balance: $314.09
+2025-11-03 13:58:38,159 | INFO | mt5_trader | 📈 Equity: $314.09
+2025-11-03 13:58:38,160 | INFO | mt5_trader | 🌐 Server: Exness-MT5Trial7
+2025-11-03 13:58:54,644 | INFO | mt5_trader | 🔌 Disconnected from MT5
+2025-11-03 14:06:09,896 | INFO | mt5_trader | ✅ Connected to MT5
+2025-11-03 14:06:09,896 | INFO | mt5_trader | 📊 Account: 206523111
+2025-11-03 14:06:09,896 | INFO | mt5_trader | 💰 Balance: $314.09
+2025-11-03 14:06:09,896 | INFO | mt5_trader | 📈 Equity: $314.09
+2025-11-03 14:06:09,896 | INFO | mt5_trader | 🌐 Server: Exness-MT5Trial7
+2025-11-03 14:06:09,899 | ERROR | mt5_trader | Order failed: 10027 - AutoTrading disabled by client
+2025-11-03 14:06:12,902 | ERROR | mt5_trader | Order failed: 10027 - AutoTrading disabled by client
+2025-11-03 14:06:15,905 | ERROR | mt5_trader | Order failed: 10027 - AutoTrading disabled by client
+2025-11-03 14:06:17,659 | INFO | mt5_trader | 🔌 Disconnected from MT5
+2025-11-03 14:07:50,408 | INFO | mt5_trader | ✅ Connected to MT5
+2025-11-03 14:07:50,409 | INFO | mt5_trader | 📊 Account: 206523111
+2025-11-03 14:07:50,409 | INFO | mt5_trader | 💰 Balance: $314.09
+2025-11-03 14:07:50,409 | INFO | mt5_trader | 📈 Equity: $314.09
+2025-11-03 14:07:50,409 | INFO | mt5_trader | 🌐 Server: Exness-MT5Trial7
+2025-11-03 14:07:50,412 | ERROR | mt5_trader | Order blocked: AutoTrading disabled on the client terminal. Please enable AutoTrading in MT5.
+2025-11-03 14:07:53,415 | ERROR | mt5_trader | Order blocked: AutoTrading disabled on the client terminal. Please enable AutoTrading in MT5.
+2025-11-03 14:07:56,418 | ERROR | mt5_trader | Order blocked: AutoTrading disabled on the client terminal. Please enable AutoTrading in MT5.
+2025-11-03 14:07:59,620 | INFO | mt5_trader | 🔌 Disconnected from MT5
+2025-11-03 14:09:17,497 | INFO | mt5_trader | ✅ Connected to MT5
+2025-11-03 14:09:17,498 | INFO | mt5_trader | 📊 Account: 206523111
+2025-11-03 14:09:17,498 | INFO | mt5_trader | 💰 Balance: $314.09
+2025-11-03 14:09:17,498 | INFO | mt5_trader | 📈 Equity: $314.09
+2025-11-03 14:09:17,498 | INFO | mt5_trader | 🌐 Server: Exness-MT5Trial7
+2025-11-03 14:09:17,500 | ERROR | mt5_trader | Order blocked: AutoTrading disabled on the client terminal. Please enable AutoTrading in MT5.
+2025-11-03 14:09:20,509 | ERROR | mt5_trader | Order blocked: AutoTrading disabled on the client terminal. Please enable AutoTrading in MT5.
+2025-11-03 14:09:23,512 | ERROR | mt5_trader | Order blocked: AutoTrading disabled on the client terminal. Please enable AutoTrading in MT5.
+2025-11-03 14:09:34,024 | INFO | mt5_trader | 🔌 Disconnected from MT5
+2025-11-03 14:13:31,838 | INFO | mt5_trader | ✅ Connected to MT5
+2025-11-03 14:13:31,838 | INFO | mt5_trader | 📊 Account: 206523111
+2025-11-03 14:13:31,838 | INFO | mt5_trader | 💰 Balance: $314.09
+2025-11-03 14:13:31,838 | INFO | mt5_trader | 📈 Equity: $314.09
+2025-11-03 14:13:31,838 | INFO | mt5_trader | 🌐 Server: Exness-MT5Trial7
+2025-11-03 14:13:31,841 | ERROR | mt5_trader | Order blocked: AutoTrading disabled on the client terminal. Please enable AutoTrading in MT5.
+2025-11-03 14:13:40,023 | INFO | mt5_trader | 🔌 Disconnected from MT5
+2025-11-03 14:22:01,056 | INFO | mt5_trader | ✅ Connected to MT5
+2025-11-03 14:22:01,057 | INFO | mt5_trader | 📊 Account: 206523111
+2025-11-03 14:22:01,057 | INFO | mt5_trader | 💰 Balance: $314.09
+2025-11-03 14:22:01,057 | INFO | mt5_trader | 📈 Equity: $314.09
+2025-11-03 14:22:01,057 | INFO | mt5_trader | 🌐 Server: Exness-MT5Trial7
+2025-11-03 14:22:01,222 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4017.423
+2025-11-03 14:22:01,222 | INFO | mt5_trader | 📋 Order ID: 2598891198
+2025-11-03 14:22:01,223 | INFO | mt5_trader | 💰 SL: 4016.686, TP: 4019.486
+2025-11-03 14:22:04,380 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4017.978
+2025-11-03 14:22:04,381 | INFO | mt5_trader | 📋 Order ID: 2598892076
+2025-11-03 14:22:04,381 | INFO | mt5_trader | 💰 SL: 4017.241, TP: 4020.0409999999997
+2025-11-03 14:22:07,519 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4018.177
+2025-11-03 14:22:07,519 | INFO | mt5_trader | 📋 Order ID: 2598892871
+2025-11-03 14:22:07,520 | INFO | mt5_trader | 💰 SL: 4017.44, TP: 4020.24
+2025-11-03 14:23:10,669 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4015.766
+2025-11-03 14:23:10,670 | INFO | mt5_trader | 📋 Order ID: 2598901061
+2025-11-03 14:23:10,670 | INFO | mt5_trader | 💰 SL: 4015.029, TP: 4017.8289999999997
+2025-11-03 14:23:13,817 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4016.034
+2025-11-03 14:23:13,817 | INFO | mt5_trader | 📋 Order ID: 2598901344
+2025-11-03 14:23:13,818 | INFO | mt5_trader | 💰 SL: 4015.297, TP: 4018.0969999999998
+2025-11-03 14:23:16,958 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4016.025
+2025-11-03 14:23:16,959 | INFO | mt5_trader | 📋 Order ID: 2598901537
+2025-11-03 14:23:16,960 | INFO | mt5_trader | 💰 SL: 4015.288, TP: 4018.0879999999997
+2025-11-03 14:24:20,107 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4015.942
+2025-11-03 14:24:20,107 | INFO | mt5_trader | 📋 Order ID: 2598908097
+2025-11-03 14:24:20,107 | INFO | mt5_trader | 💰 SL: 4015.2050000000004, TP: 4018.005
+2025-11-03 14:24:23,250 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4015.587
+2025-11-03 14:24:23,250 | INFO | mt5_trader | 📋 Order ID: 2598908349
+2025-11-03 14:24:23,251 | INFO | mt5_trader | 💰 SL: 4014.8500000000004, TP: 4017.65
+2025-11-03 14:25:26,398 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4018.291
+2025-11-03 14:25:26,399 | INFO | mt5_trader | 📋 Order ID: 2598915714
+2025-11-03 14:25:26,399 | INFO | mt5_trader | 💰 SL: 4017.554, TP: 4020.354
+2025-11-03 14:25:29,546 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4018.246
+2025-11-03 14:25:29,547 | INFO | mt5_trader | 📋 Order ID: 2598916300
+2025-11-03 14:25:29,548 | INFO | mt5_trader | 💰 SL: 4017.509, TP: 4020.3089999999997
+2025-11-03 14:25:32,690 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4018.386
+2025-11-03 14:25:32,690 | INFO | mt5_trader | 📋 Order ID: 2598916700
+2025-11-03 14:25:32,690 | INFO | mt5_trader | 💰 SL: 4017.6490000000003, TP: 4020.449
+2025-11-03 14:27:35,843 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4018.941
+2025-11-03 14:27:35,843 | INFO | mt5_trader | 📋 Order ID: 2598934480
+2025-11-03 14:27:35,843 | INFO | mt5_trader | 💰 SL: 4018.204, TP: 4021.004
+2025-11-03 14:27:38,982 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4019.353
+2025-11-03 14:27:38,982 | INFO | mt5_trader | 📋 Order ID: 2598934973
+2025-11-03 14:27:38,983 | INFO | mt5_trader | 💰 SL: 4018.616, TP: 4021.4159999999997
+2025-11-03 14:27:42,122 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4018.799
+2025-11-03 14:27:42,122 | INFO | mt5_trader | 📋 Order ID: 2598935305
+2025-11-03 14:27:42,122 | INFO | mt5_trader | 💰 SL: 4018.0620000000004, TP: 4020.862
+2025-11-03 14:30:45,276 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4019.559
+2025-11-03 14:30:45,277 | INFO | mt5_trader | 📋 Order ID: 2598955645
+2025-11-03 14:30:45,278 | INFO | mt5_trader | 💰 SL: 4018.822, TP: 4021.622
+2025-11-03 14:31:48,425 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4017.395
+2025-11-03 14:31:48,425 | INFO | mt5_trader | 📋 Order ID: 2598963413
+2025-11-03 14:31:48,425 | INFO | mt5_trader | 💰 SL: 4016.6580000000004, TP: 4019.458
+2025-11-03 14:31:51,581 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4017.385
+2025-11-03 14:31:51,581 | INFO | mt5_trader | 📋 Order ID: 2598963805
+2025-11-03 14:31:51,582 | INFO | mt5_trader | 💰 SL: 4016.648, TP: 4019.448
+2025-11-03 14:31:54,724 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4017.269
+2025-11-03 14:31:54,724 | INFO | mt5_trader | 📋 Order ID: 2598964036
+2025-11-03 14:31:54,725 | INFO | mt5_trader | 💰 SL: 4016.532, TP: 4019.332
+2025-11-03 14:32:57,870 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4017.02
+2025-11-03 14:32:57,870 | INFO | mt5_trader | 📋 Order ID: 2598970643
+2025-11-03 14:32:57,870 | INFO | mt5_trader | 💰 SL: 4016.2830000000004, TP: 4019.083
+2025-11-03 14:33:01,021 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4016.554
+2025-11-03 14:33:01,021 | INFO | mt5_trader | 📋 Order ID: 2598971010
+2025-11-03 14:33:01,021 | INFO | mt5_trader | 💰 SL: 4015.817, TP: 4018.6169999999997
+2025-11-03 14:33:04,167 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4016.202
+2025-11-03 14:33:04,168 | INFO | mt5_trader | 📋 Order ID: 2598971540
+2025-11-03 14:33:04,168 | INFO | mt5_trader | 💰 SL: 4015.465, TP: 4018.265
+2025-11-03 14:33:07,312 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4016.261
+2025-11-03 14:33:07,313 | INFO | mt5_trader | 📋 Order ID: 2598971816
+2025-11-03 14:33:07,314 | INFO | mt5_trader | 💰 SL: 4015.5240000000003, TP: 4018.324
+2025-11-03 14:35:10,472 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4018.561
+2025-11-03 14:35:10,472 | INFO | mt5_trader | 📋 Order ID: 2598983451
+2025-11-03 14:35:10,472 | INFO | mt5_trader | 💰 SL: 4017.824, TP: 4020.624
+2025-11-03 14:35:13,631 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4018.67
+2025-11-03 14:35:13,631 | INFO | mt5_trader | 📋 Order ID: 2598983746
+2025-11-03 14:35:13,631 | INFO | mt5_trader | 💰 SL: 4017.933, TP: 4020.7329999999997
+2025-11-03 14:35:16,796 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4018.607
+2025-11-03 14:35:16,797 | INFO | mt5_trader | 📋 Order ID: 2598984009
+2025-11-03 14:35:16,797 | INFO | mt5_trader | 💰 SL: 4017.8700000000003, TP: 4020.67
+2025-11-03 14:35:19,951 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4017.794
+2025-11-03 14:35:19,952 | INFO | mt5_trader | 📋 Order ID: 2598984352
+2025-11-03 14:35:19,952 | INFO | mt5_trader | 💰 SL: 4017.0570000000002, TP: 4019.857
+2025-11-03 14:35:23,096 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4017.764
+2025-11-03 14:35:23,097 | INFO | mt5_trader | 📋 Order ID: 2598984651
+2025-11-03 14:35:23,097 | INFO | mt5_trader | 💰 SL: 4017.027, TP: 4019.8269999999998
+2025-11-03 14:35:26,242 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4017.811
+2025-11-03 14:35:26,242 | INFO | mt5_trader | 📋 Order ID: 2598984936
+2025-11-03 14:35:26,243 | INFO | mt5_trader | 💰 SL: 4017.074, TP: 4019.874
+2025-11-03 14:36:29,391 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4020.963
+2025-11-03 14:36:29,392 | INFO | mt5_trader | 📋 Order ID: 2598993314
+2025-11-03 14:36:29,392 | INFO | mt5_trader | 💰 SL: 4020.226, TP: 4023.026
+2025-11-03 14:36:32,538 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4021.839
+2025-11-03 14:36:32,538 | INFO | mt5_trader | 📋 Order ID: 2598994281
+2025-11-03 14:36:32,539 | INFO | mt5_trader | 💰 SL: 4021.0710000000004, TP: 4023.871
+2025-11-03 14:36:35,695 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4021.413
+2025-11-03 14:36:35,695 | INFO | mt5_trader | 📋 Order ID: 2598994910
+2025-11-03 14:36:35,695 | INFO | mt5_trader | 💰 SL: 4020.6760000000004, TP: 4023.476
+2025-11-03 14:37:38,843 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4022.891
+2025-11-03 14:37:38,843 | INFO | mt5_trader | 📋 Order ID: 2599004497
+2025-11-03 14:37:38,843 | INFO | mt5_trader | 💰 SL: 4022.154, TP: 4024.9539999999997
+2025-11-03 14:37:41,983 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4022.804
+2025-11-03 14:37:41,983 | INFO | mt5_trader | 📋 Order ID: 2599004867
+2025-11-03 14:37:41,983 | INFO | mt5_trader | 💰 SL: 4022.067, TP: 4024.8669999999997
+2025-11-03 14:38:45,133 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4020.6
+2025-11-03 14:38:45,133 | INFO | mt5_trader | 📋 Order ID: 2599012939
+2025-11-03 14:38:45,134 | INFO | mt5_trader | 💰 SL: 4019.8630000000003, TP: 4022.663
+2025-11-03 14:38:48,280 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4020.826
+2025-11-03 14:38:48,281 | INFO | mt5_trader | 📋 Order ID: 2599013250
+2025-11-03 14:38:48,281 | INFO | mt5_trader | 💰 SL: 4020.0890000000004, TP: 4022.889
+2025-11-03 14:38:51,436 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4020.885
+2025-11-03 14:38:51,436 | INFO | mt5_trader | 📋 Order ID: 2599013527
+2025-11-03 14:38:51,437 | INFO | mt5_trader | 💰 SL: 4020.148, TP: 4022.948
+2025-11-03 14:39:54,594 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4021.179
+2025-11-03 14:39:54,595 | INFO | mt5_trader | 📋 Order ID: 2599019891
+2025-11-03 14:39:54,596 | INFO | mt5_trader | 💰 SL: 4020.442, TP: 4023.2419999999997
+2025-11-03 14:39:57,747 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4021.103
+2025-11-03 14:39:57,747 | INFO | mt5_trader | 📋 Order ID: 2599020217
+2025-11-03 14:39:57,747 | INFO | mt5_trader | 💰 SL: 4020.366, TP: 4023.1659999999997
+2025-11-03 14:41:00,897 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4022.234
+2025-11-03 14:41:00,898 | INFO | mt5_trader | 📋 Order ID: 2599026901
+2025-11-03 14:41:00,898 | INFO | mt5_trader | 💰 SL: 4021.4970000000003, TP: 4024.297
+2025-11-03 14:42:04,061 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4022.317
+2025-11-03 14:42:04,061 | INFO | mt5_trader | 📋 Order ID: 2599033791
+2025-11-03 14:42:04,061 | INFO | mt5_trader | 💰 SL: 4021.5800000000004, TP: 4024.38
+2025-11-03 14:42:07,206 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4022.234
+2025-11-03 14:42:07,206 | INFO | mt5_trader | 📋 Order ID: 2599034116
+2025-11-03 14:42:07,206 | INFO | mt5_trader | 💰 SL: 4021.4970000000003, TP: 4024.297
+2025-11-03 14:43:10,353 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4020.997
+2025-11-03 14:43:10,353 | INFO | mt5_trader | 📋 Order ID: 2599041047
+2025-11-03 14:43:10,353 | INFO | mt5_trader | 💰 SL: 4020.26, TP: 4023.06
+2025-11-03 14:43:13,499 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4021.285
+2025-11-03 14:43:13,499 | INFO | mt5_trader | 📋 Order ID: 2599041347
+2025-11-03 14:43:13,499 | INFO | mt5_trader | 💰 SL: 4020.5480000000002, TP: 4023.348
+2025-11-03 14:43:16,640 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4021.077
+2025-11-03 14:43:16,640 | INFO | mt5_trader | 📋 Order ID: 2599041697
+2025-11-03 14:43:16,640 | INFO | mt5_trader | 💰 SL: 4020.34, TP: 4023.14
+2025-11-03 14:46:19,800 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4021.359
+2025-11-03 14:46:19,801 | INFO | mt5_trader | 📋 Order ID: 2599059130
+2025-11-03 14:46:19,802 | INFO | mt5_trader | 💰 SL: 4020.6220000000003, TP: 4023.422
+2025-11-03 14:46:22,941 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4021.595
+2025-11-03 14:46:22,941 | INFO | mt5_trader | 📋 Order ID: 2599059457
+2025-11-03 14:46:22,941 | INFO | mt5_trader | 💰 SL: 4020.858, TP: 4023.658
+2025-11-03 14:46:26,077 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4021.528
+2025-11-03 14:46:26,077 | INFO | mt5_trader | 📋 Order ID: 2599059643
+2025-11-03 14:46:26,077 | INFO | mt5_trader | 💰 SL: 4020.791, TP: 4023.591
+2025-11-03 14:48:29,222 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4022.38
+2025-11-03 14:48:29,222 | INFO | mt5_trader | 📋 Order ID: 2599074081
+2025-11-03 14:48:29,222 | INFO | mt5_trader | 💰 SL: 4021.643, TP: 4024.4429999999998
+2025-11-03 14:49:32,366 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4022.408
+2025-11-03 14:49:32,367 | INFO | mt5_trader | 📋 Order ID: 2599080543
+2025-11-03 14:49:32,367 | INFO | mt5_trader | 💰 SL: 4021.6710000000003, TP: 4024.471
+2025-11-03 14:51:35,518 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4024.74
+2025-11-03 14:51:35,518 | INFO | mt5_trader | 📋 Order ID: 2599108129
+2025-11-03 14:51:35,519 | INFO | mt5_trader | 💰 SL: 4024.003, TP: 4026.803
+2025-11-03 14:51:38,657 | INFO | mt5_trader | ✅ Order sent: BUY 0.01 lots XAUUSD @ 4024.957
+2025-11-03 14:51:38,657 | INFO | mt5_trader | 📋 Order ID: 2599108424
+2025-11-03 14:51:38,657 | INFO | mt5_trader | 💰 SL: 4024.2200000000003, TP: 4027.02
+2025-11-03 14:51:39,982 | INFO | mt5_trader | 🔌 Disconnected from MT5

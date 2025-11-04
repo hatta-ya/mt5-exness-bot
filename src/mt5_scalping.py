@@ -28,7 +28,7 @@ from .config import *  # noqa: F401,F403  (keep your current constants)
 from .strategy import golden_trend_system, calculate_indicators
 from .utils.logger import get_logger
 
-log = get_logger("mt5_trader")
+log = get_logger("mt5_scalping")
 
 # ---------- Helpers ----------
 

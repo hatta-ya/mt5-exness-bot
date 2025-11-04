@@ -7,9 +7,10 @@
 import MetaTrader5 as mt5
 import pandas as pd
 import time
+import os
 from datetime import datetime, timedelta
 from .config import *
-from .strategy import golden_trend_system
+from .strategy import golden_trend_system, calculate_indicators
 from .utils.logger import get_logger
 
 log = get_logger("mt5_trader")
@@ -20,6 +21,9 @@ class MT5Trader:
         self.account_info = None
         self.positions = []
         self.orders = []
+        # history of executed orders/trades for logging similar to backtest
+        self.trade_history = []
+        self.order_count = 0
         # Flag to stop attempting orders when AutoTrading is disabled on MT5 terminal
         self.auto_trading_disabled = False
         # Internal flag to avoid repeating the same warning message
@@ -29,7 +33,19 @@ class MT5Trader:
         self.consecutive_trade_losses = 0   # reserved for real P/L-based loss counting
         # Auto-resume check
         self._last_auto_check = None
-        
+        # throttle for logging repeated "no signal" messages (seconds)
+        try:
+            self.no_signal_log_throttle = int(os.getenv('NO_SIGNAL_LOG_THROTTLE_SECONDS', '30'))
+        except Exception:
+            self.no_signal_log_throttle = 30
+        self._last_no_signal_log_time = None
+        # debug flag to enable detailed M5 indicators logging
+        self.debug_m5 = os.getenv('DEBUG_M5_LOG', 'false').lower() in ('1', 'true', 'yes')
+        # sculpt mode cooldown
+        self._last_sculpt_time = None
+        # trailing state per ticket: store last trail price used
+        self._trailing_state = {}
+
     def connect(self):
         """เชื่อมต่อกับ MT5"""
         try:
@@ -221,6 +237,25 @@ class MT5Trader:
             log.info(f"✅ Order sent: {action} {lot_size} lots {symbol} @ {price}")
             log.info(f"📋 Order ID: {result.order}")
             log.info(f"💰 SL: {sl_price}, TP: {tp_price}")
+            # Record trade in history and emit a single-line backtest-style log
+            try:
+                self.order_count += 1
+                trade_no = self.order_count
+                trade_entry = {
+                    'no': trade_no,
+                    'action': action,
+                    'entry_price': price,
+                    'lot_size': lot_size,
+                    'sl_price': sl_price,
+                    'tp_price': tp_price,
+                    'order_id': getattr(result, 'order', None),
+                    'time': datetime.now(),
+                }
+                self.trade_history.append(trade_entry)
+                # single-line summary similar to golden_backtest
+                log.info(f"#{trade_no:04d} 🎯 {action} @ ${price:.2f} | Lots: {lot_size} | OrderID: {trade_entry['order_id']} | SL: {sl_price} | TP: {tp_price}")
+            except Exception:
+                pass
             
             return result
             
@@ -335,8 +370,26 @@ class MT5Trader:
             if result.retcode != mt5.TRADE_RETCODE_DONE:
                 log.error(f"Close failed: {result.retcode} - {result.comment}")
                 return False
-            
-            log.info(f"✅ Position {ticket} closed")
+            # Update account info
+            try:
+                self.account_info = mt5.account_info()
+            except Exception:
+                pass
+
+            # Try to report profit if available
+            try:
+                profit = getattr(position, 'profit', None)
+            except Exception:
+                profit = None
+
+            # single-line summary similar to backtest
+            try:
+                self.order_count += 1
+                close_no = self.order_count
+                balance_str = f"${self.account_info.balance:.2f}" if self.account_info else "N/A"
+                log.info(f"#{close_no:04d} 🔒 Close ticket {ticket} | P&L: ${profit:.2f} | Balance: {balance_str} | Reason: Close by Golden Trend Bot")
+            except Exception:
+                log.info(f"✅ Position {ticket} closed")
             return True
             
         except Exception as e:
@@ -478,6 +531,101 @@ class MT5Trader:
                             continue
                 except Exception as e:
                     log.error(f"Error computing aggregate profit: {e}")
+                # --- Manage open positions: breakeven and ATR-based trailing (applies to sculpt or normal modes) ---
+                try:
+                    for pos in positions:
+                        try:
+                            ticket = pos.get('ticket')
+                            symbol = pos.get('symbol')
+                            vol = pos.get('volume')
+                            entry_price = pos.get('price_open')
+                            cur_sl = pos.get('sl')
+                            cur_tp = pos.get('tp')
+                            pos_type = pos.get('type')
+                            profit_usd = pos.get('profit', 0.0)
+
+                            # get current price
+                            tick = mt5.symbol_info_tick(symbol)
+                            if tick is None:
+                                continue
+                            current_price = tick.bid if pos_type == 'BUY' else tick.ask
+
+                            # get ATR from M1
+                            df_m1_pos = self.get_current_data(symbol, 'M1', count=100)
+                            if df_m1_pos is None:
+                                continue
+                            inds_pos = calculate_indicators(df_m1_pos.copy()).iloc[-1]
+                            atr = inds_pos.get('atr', 0.0) or 0.0
+                            if atr < SCULPT_MIN_ATR:
+                                continue
+
+                            # compute risk in USD using sl distance
+                            if cur_sl is None or cur_sl == 0:
+                                continue
+                            sl_points = abs(entry_price - cur_sl) / POINT_SIZE if POINT_SIZE > 0 else 0
+                            risk_usd = sl_points * VALUE_PER_PIP_PER_LOT * vol
+
+                            # breakeven
+                            if risk_usd > 0 and profit_usd >= (SCULPT_BREAKEVEN_R_MULT * risk_usd):
+                                # move SL to entry_price if not already
+                                if abs(cur_sl - entry_price) > 1e-9:
+                                    try:
+                                        req = {
+                                            'action': mt5.TRADE_ACTION_SLTP,
+                                            'position': int(ticket),
+                                            'sl': float(entry_price),
+                                            'tp': float(cur_tp) if cur_tp else 0.0,
+                                        }
+                                        res = mt5.order_send(req)
+                                        if getattr(res, 'retcode', None) == mt5.TRADE_RETCODE_DONE:
+                                            log.info(f"Breakeven set for ticket {ticket} at {entry_price}")
+                                            # update trailing baseline
+                                            self._trailing_state[ticket] = entry_price
+                                        else:
+                                            log.debug(f"Breakeven modify failed for {ticket}: {getattr(res,'retcode', None)}")
+                                    except Exception as e:
+                                        log.error(f"Error setting breakeven for {ticket}: {e}")
+
+                            # ATR-based trailing: move SL in ATR steps
+                            try:
+                                step = SCULPT_TRAILING_ATR_STEP_MULT * atr
+                                last_base = self._trailing_state.get(ticket, entry_price)
+                                if pos_type == 'BUY':
+                                    if (current_price - last_base) >= step:
+                                        new_sl = max(cur_sl, current_price - step)
+                                        if new_sl > cur_sl:
+                                            req = {
+                                                'action': mt5.TRADE_ACTION_SLTP,
+                                                'position': int(ticket),
+                                                'sl': float(new_sl),
+                                                'tp': float(cur_tp) if cur_tp else 0.0,
+                                            }
+                                            res = mt5.order_send(req)
+                                            if getattr(res, 'retcode', None) == mt5.TRADE_RETCODE_DONE:
+                                                log.info(f"Trailing SL updated for ticket {ticket} -> {new_sl}")
+                                                self._trailing_state[ticket] = current_price
+                                else:
+                                    # SELL
+                                    if (last_base - current_price) >= step:
+                                        new_sl = min(cur_sl, current_price + step) if cur_sl else (current_price + step)
+                                        if cur_sl is None or new_sl < cur_sl:
+                                            req = {
+                                                'action': mt5.TRADE_ACTION_SLTP,
+                                                'position': int(ticket),
+                                                'sl': float(new_sl),
+                                                'tp': float(cur_tp) if cur_tp else 0.0,
+                                            }
+                                            res = mt5.order_send(req)
+                                            if getattr(res, 'retcode', None) == mt5.TRADE_RETCODE_DONE:
+                                                log.info(f"Trailing SL updated for ticket {ticket} -> {new_sl}")
+                                                self._trailing_state[ticket] = current_price
+                            except Exception:
+                                pass
+
+                        except Exception:
+                            continue
+                except Exception as e:
+                    log.error(f"Error managing breakeven/trailing: {e}")
                 # Sanity check vs terminal total positions to handle inconsistent state
                 try:
                     total_open = mt5.positions_total()
@@ -494,36 +642,236 @@ class MT5Trader:
                     time.sleep(60)
                     continue
                 
-                # Force a BUY 0.01 every run (ignore strategy result)
-                action = 'BUY'
-                lot_size = 0.01
+                # If SCULPT_MODE enabled, use M1 sculpting logic; otherwise use M5 as before
+                if SCULPT_MODE:
+                    try:
+                        symbol_info = self.get_symbol_info(SYMBOL) or {}
+                        account_balance = (self.account_info.balance if self.account_info else 0.0)
 
-                # คำนวณ SL และ TP ตามค่า SL_PIPS/TP_PIPS เดิม (สามารถปรับเป็น None ถ้าไม่ต้องการ)
-                sl_price = current_price - (SL_PIPS * POINT_SIZE)
-                tp_price = current_price + (TP_PIPS * POINT_SIZE)
+                        # respect sculpt cooldown
+                        now = datetime.now()
+                        if self._last_sculpt_time and (now - self._last_sculpt_time).total_seconds() < SCULPT_COOLDOWN_SECONDS:
+                            # still in cooldown
+                            time.sleep(1)
+                            continue
 
-                print(f"\n🎯 Forced Signal: {action} @ {current_price:.2f} | Lot: {lot_size}")
+                        df_m1 = self.get_current_data(SYMBOL, 'M1', count=200)
+                        if df_m1 is None:
+                            log.debug("Insufficient data for M1 sculpting check")
+                            time.sleep(1)
+                            continue
 
-                order_result = self.send_order(
-                    action=action,
-                    symbol=SYMBOL,
-                    lot_size=lot_size,
-                    sl_price=sl_price,
-                    tp_price=tp_price
-                )
+                        res_m1 = golden_trend_system(
+                            df_m1,
+                            risk_pct=RISK_PERCENT,
+                            account_balance=account_balance,
+                            macd_hist_threshold=SCULPT_MACD_THRESHOLD,
+                            sl_multiplier=SCULPT_SL_MULT,
+                            tp_multiplier=SCULPT_TP_MULT,
+                            point_size=POINT_SIZE,
+                            value_per_point_per_lot=VALUE_PER_PIP_PER_LOT,
+                            min_lot=symbol_info.get('min_lot', 0.01),
+                            max_lot=symbol_info.get('max_lot', 0.1),
+                        )
+                    except Exception as e:
+                        log.error(f"Strategy execution error on M1 sculpting: {e}")
+                        time.sleep(1)
+                        continue
 
-                if order_result:
-                    last_signal_time = datetime.now()
-                    print(f"✅ ส่งออเดอร์สำเร็จ: {action} {lot_size} lots")
-                    # reset failed send counter on success
-                    self.failed_send_count = 0
+                    sig1 = res_m1.get('signal', 'NONE')
+                    log.debug(f"Sculpt M1 signal={sig1}")
+
+                    if sig1 == 'NONE':
+                        msg = f"No valid sculpt signal at {current_time.strftime('%Y-%m-%d %H:%M:%S')} (M1=NONE)"
+                        print(f"\n🔎 {msg}")
+                        try:
+                            now = datetime.now()
+                            if not self._last_no_signal_log_time or (now - self._last_no_signal_log_time).total_seconds() >= self.no_signal_log_throttle:
+                                log.info(msg)
+                                self._last_no_signal_log_time = now
+                        except Exception:
+                            pass
+                        time.sleep(1)
+                        continue
+
+                    action = sig1
+                    per_trade_lot = SCULPT_PER_TRADE_LOT
+                    desired_trades = SCULPT_MAX_TRADES
+
+                    positions = self.get_positions()
+                    current_count = len(positions)
+                    max_allowed = min(MAX_POSITIONS, desired_trades)
+                    to_open = max(0, max_allowed - current_count)
+
+                    sl_price = res_m1.get('sl_price')
+                    tp_price = res_m1.get('tp_price')
+
+                    if to_open <= 0:
+                        log.info(f"Already have {current_count} position(s); not opening sculpt trades (target {desired_trades})")
+                        time.sleep(1)
+                        continue
+
+                    # Optionally log detailed M1 indicators for debugging
+                    try:
+                        if self.debug_m5:
+                            inds = calculate_indicators(df_m1.copy()).iloc[-1]
+                            dbg_msg = (
+                                f"M1 debug | time={inds.name if hasattr(inds,'name') else df_m1.iloc[-1]['time']} "
+                                f"close={inds.get('close', 'N/A'):.5f} ema20={inds.get('ema20', 0):.5f} ema50={inds.get('ema50', 0):.5f} ema200={inds.get('ema200', 0):.5f} "
+                                f"macd_hist={inds.get('macd_hist', 0):.5f} atr={inds.get('atr', 0):.5f}"
+                            )
+                            log.info(dbg_msg)
+                            log.info(f"M1 strategy result: {res_m1}")
+                    except Exception:
+                        pass
+
+                    print(f"\n🎯 Sculpt Confirmed (M1): {action} — opening {to_open} trade(s) x {per_trade_lot} lots")
+
+                    opened_any = False
+                    for n in range(to_open):
+                        positions_now = self.get_positions()
+                        if len(positions_now) >= MAX_POSITIONS:
+                            log.info(f"Reached MAX_POSITIONS ({MAX_POSITIONS}) before opening remaining sculpt trades; stopping.")
+                            break
+
+                        order_result = self.send_order(
+                            action=action,
+                            symbol=SYMBOL,
+                            lot_size=per_trade_lot,
+                            sl_price=sl_price,
+                            tp_price=tp_price
+                        )
+
+                        if order_result:
+                            opened_any = True
+                            last_signal_time = datetime.now()
+                            print(f"✅ Sent sculpt order {n+1}/{to_open}: {action} {per_trade_lot} lots")
+                            self.failed_send_count = 0
+                            time.sleep(0.5)
+                        else:
+                            if self.auto_trading_disabled:
+                                print("❌ ส่งออเดอร์ไม่สำเร็จ (AutoTrading ปิดอยู่) — จะไม่ถูกนับเป็นการขาดทุน")
+                            else:
+                                self.failed_send_count += 1
+                                print("❌ ส่งออเดอร์ไม่สำเร็จ")
+
+                    if opened_any:
+                        self._last_sculpt_time = datetime.now()
+
+                    continue
                 else:
-                    # Don't count failed send attempts due to AutoTrading being disabled as failures
-                    if self.auto_trading_disabled:
-                        print("❌ ส่งออเดอร์ไม่สำเร็จ (AutoTrading ปิดอยู่) — จะไม่ถูกนับเป็นการขาดทุน")
-                    else:
-                        self.failed_send_count += 1
-                        print(f"❌ ส่งออเดอร์ไม่สำเร็จ")
+                    # existing M5 logic (unchanged)
+                    try:
+                        symbol_info = self.get_symbol_info(SYMBOL) or {}
+                        account_balance = (self.account_info.balance if self.account_info else 0.0)
+
+                        df_m5 = self.get_current_data(SYMBOL, 'M5', count=200)
+                        if df_m5 is None:
+                            log.debug("Insufficient data for M5 strategy check")
+                            time.sleep(1)
+                            continue
+
+                        res_m5 = golden_trend_system(
+                            df_m5,
+                            risk_pct=RISK_PERCENT,
+                            account_balance=account_balance,
+                            macd_hist_threshold=M5_MACD_THRESHOLD,
+                            point_size=POINT_SIZE,
+                            value_per_point_per_lot=VALUE_PER_PIP_PER_LOT,
+                            min_lot=symbol_info.get('min_lot', 0.01),
+                            max_lot=symbol_info.get('max_lot', 0.1),
+                        )
+                    except Exception as e:
+                        log.error(f"Strategy execution error on M5: {e}")
+                        time.sleep(1)
+                        continue
+
+                    sig5 = res_m5.get('signal', 'NONE')
+
+                    # Log debug summary of M5
+                    log.debug(f"Strategy M5 signal={sig5}")
+
+                    if sig5 == 'NONE':
+                        msg = f"No valid strategy signal at {current_time.strftime('%Y-%m-%d %H:%M:%S')} (M5=NONE)"
+                        print(f"\n🔎 {msg}")
+                        # Throttle file logging to reduce noise
+                        try:
+                            now = datetime.now()
+                            if not self._last_no_signal_log_time or (now - self._last_no_signal_log_time).total_seconds() >= self.no_signal_log_throttle:
+                                log.info(msg)
+                                self._last_no_signal_log_time = now
+                        except Exception:
+                            pass
+                        time.sleep(1)
+                        continue
+
+                    action = sig5
+
+                    # We will open up to 5 trades of 0.01 lots (or less if broker/MAX_POSITIONS limits apply)
+                    per_trade_lot = 0.01
+                    desired_trades = 5
+
+                    # Check current bot-managed positions
+                    positions = self.get_positions()
+                    current_count = len(positions)
+                    max_allowed = min(MAX_POSITIONS, desired_trades)
+                    to_open = max(0, max_allowed - current_count)
+
+                    sl_price = res_m5.get('sl_price')
+                    tp_price = res_m5.get('tp_price')
+
+                    if to_open <= 0:
+                        log.info(f"Already have {current_count} position(s); not opening more (target {desired_trades})")
+                        time.sleep(1)
+                        continue
+
+                    # Optionally log detailed M5 indicators for debugging
+                    try:
+                        if self.debug_m5:
+                            inds = calculate_indicators(df_m5.copy()).iloc[-1]
+                            dbg_msg = (
+                                f"M5 debug | time={inds.name if hasattr(inds,'name') else df_m5.iloc[-1]['time']} "
+                                f"close={inds.get('close', 'N/A'):.5f} ema20={inds.get('ema20', 0):.5f} ema50={inds.get('ema50', 0):.5f} ema200={inds.get('ema200', 0):.5f} "
+                                f"macd_hist={inds.get('macd_hist', 0):.5f} atr={inds.get('atr', 0):.5f}"
+                            )
+                            log.info(dbg_msg)
+                            log.info(f"M5 strategy result: {res_m5}")
+                    except Exception:
+                        pass
+
+                    print(f"\n🎯 Confirmed Signal (M5): {action} — opening {to_open} trade(s) x {per_trade_lot} lots")
+
+                    # Open trades but ensure we never exceed MAX_POSITIONS (bot-managed positions)
+                    for n in range(to_open):
+                        # double-check current bot positions before each order
+                        positions_now = self.get_positions()
+                        if len(positions_now) >= MAX_POSITIONS:
+                            log.info(f"Reached MAX_POSITIONS ({MAX_POSITIONS}) before opening remaining trades; stopping.")
+                            break
+
+                        order_result = self.send_order(
+                            action=action,
+                            symbol=SYMBOL,
+                            lot_size=per_trade_lot,
+                            sl_price=sl_price,
+                            tp_price=tp_price
+                        )
+
+                        if order_result:
+                            last_signal_time = datetime.now()
+                            print(f"✅ Sent order {n+1}/{to_open}: {action} {per_trade_lot} lots")
+                            self.failed_send_count = 0
+                            # small delay between sends to avoid spamming
+                            time.sleep(0.5)
+                        else:
+                            if self.auto_trading_disabled:
+                                print("❌ ส่งออเดอร์ไม่สำเร็จ (AutoTrading ปิดอยู่) — จะไม่ถูกนับเป็นการขาดทุน")
+                            else:
+                                self.failed_send_count += 1
+                                print("❌ ส่งออเดอร์ไม่สำเร็จ")
+
+
+                # cleanup: we handled per-order success/failure inside the loops above
                 
                 # แสดงสถานะปัจจุบัน
                 print(f"⏰ {current_time.strftime('%Y-%m-%d %H:%M:%S')} | Price: {current_price:.2f} | Positions: {len(positions)} | Balance: ${self.account_info.balance:.2f}")

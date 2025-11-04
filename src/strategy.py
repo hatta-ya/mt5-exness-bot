@@ -61,6 +61,8 @@ def golden_trend_system(
     sl_multiplier: float = 1.5,
     tp_multiplier: float = 2.5,
     require_pullback_to_ema20: bool = False,
+    # When True require ema50 > ema200 in addition to ema20>ema50 for a strict trend
+    ema_require_200: bool = True,
     point_size: float = 0.0001,
     value_per_point_per_lot: float = 10.0,
     min_lot: float = 0.01,
@@ -73,24 +75,31 @@ def golden_trend_system(
     designed to be deterministic for backtests.
     """
     if df is None or len(df) < 50:
-        return {'signal': 'NONE'}
+        return {'signal': 'NONE', 'debug': {'reason': 'insufficient_bars', 'bars': 0 if df is None else len(df)}}
 
     df_ind = calculate_indicators(df.copy())
     last = df_ind.iloc[-1]
 
-    # Default return
-    res = {'signal': 'NONE'}
+    # Default return + debug helper for why no signal
+    res = {'signal': 'NONE', 'debug': {}}
 
     # Basic trend filter using EMAs
-    bullish = last['ema20'] > last['ema50'] and last['ema50'] > last['ema200']
-    bearish = last['ema20'] < last['ema50'] and last['ema50'] < last['ema200']
+    # EMA trend: allow configurable strictness for requiring ema50 > ema200
+    if ema_require_200:
+        bullish = last['ema20'] > last['ema50'] and last['ema50'] > last['ema200']
+        bearish = last['ema20'] < last['ema50'] and last['ema50'] < last['ema200']
+    else:
+        # More permissive: only require short-term EMAs ordering
+        bullish = last['ema20'] > last['ema50']
+        bearish = last['ema20'] < last['ema50']
 
     macd_hist = last.get('macd_hist', 0.0)
     atr = last.get('atr', 0.0)
     entry_price = last['close']
 
     if atr is None or atr == 0:
-        # cannot size or set SL without ATR
+        # cannot size or set SL without ATR — include debug values so user can see why
+        res['debug'].update({'ema20': float(last.get('ema20', 0)), 'ema50': float(last.get('ema50', 0)), 'ema200': float(last.get('ema200', 0)), 'macd_hist': float(macd_hist), 'atr': float(atr), 'reason': 'atr_zero'})
         return res
 
     # BUY signal
@@ -112,6 +121,15 @@ def golden_trend_system(
             'tp_price': tp_price,
             'lot_size': lot_size,
         })
+        # attach debug info used by live mode when DEBUG_M5_LOG is enabled
+        res['debug'] = {
+            'ema20': float(last.get('ema20', 0)),
+            'ema50': float(last.get('ema50', 0)),
+            'ema200': float(last.get('ema200', 0)),
+            'macd_hist': float(macd_hist),
+            'atr': float(atr),
+            'reason': 'buy_criteria_met',
+        }
         return res
 
     # SELL signal
@@ -132,6 +150,16 @@ def golden_trend_system(
             'tp_price': tp_price,
             'lot_size': lot_size,
         })
+        res['debug'] = {
+            'ema20': float(last.get('ema20', 0)),
+            'ema50': float(last.get('ema50', 0)),
+            'ema200': float(last.get('ema200', 0)),
+            'macd_hist': float(macd_hist),
+            'atr': float(atr),
+            'reason': 'sell_criteria_met',
+        }
         return res
 
+    # no entry — include debug info so caller can log why (EMA/MACD/ATR values)
+    res['debug'].update({'ema20': float(last.get('ema20', 0)), 'ema50': float(last.get('ema50', 0)), 'ema200': float(last.get('ema200', 0)), 'macd_hist': float(macd_hist), 'atr': float(atr), 'reason': 'criteria_not_met', 'bullish': bool(bullish), 'bearish': bool(bearish)})
     return res

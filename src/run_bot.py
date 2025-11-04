@@ -172,6 +172,7 @@ def main():
         candidate_scripts = [
             ("📈 Golden Trend Backtest", "golden_backtest.py"),
             ("🚀 Live Trading (MT5)", "mt5_trader.py"),
+            ("⚡ Scalping (MT5)", "mt5_scalping.py"),
         ]
 
         available_scripts = [(label, fname) for (label, fname) in candidate_scripts if os.path.exists(os.path.join(script_dir, fname))]
